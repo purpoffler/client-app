@@ -1,17 +1,26 @@
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.concurrent.Callable;
+import java.util.concurrent.BlockingQueue;
 
-public class DataType implements Callable<ArrayList<String>> {
-    static Scanner sc = new Scanner(System.in);
+public class DataType implements Runnable {
     ArrayList<String> inputData = new ArrayList<>();
+    private final BlockingQueue<ArrayList<String>> dataQueue;
+    static Scanner sc = new Scanner(System.in);
+
+    public DataType(BlockingQueue dataQueue){
+        this.dataQueue = dataQueue;
+    }
 
     @Override
-    public ArrayList<String> call() throws Exception {
+    public void run() {
         chooseDataType();
         System.out.println("Введите данные (не более 200 символов):");
         inputData();
-        return inputData;
+        try {
+            dataQueue.put(inputData);
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
     }
 
     private void chooseDataType(){
@@ -41,6 +50,4 @@ public class DataType implements Callable<ArrayList<String>> {
             }
         }
     }
-
-
 }
