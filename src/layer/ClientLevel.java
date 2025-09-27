@@ -26,7 +26,6 @@ public class ClientLevel implements Runnable {
                     ConsoleHelper.writeSystemMessage("Ошибка при отправке пакета");
                     connection.send(packet + "\n"); // повторно отправляем сообщение на сервер
                 }
-                ConsoleHelper.getInstruction();
             }
         } catch (UnknownHostException e) {
             throw new RuntimeException("Неправильный хост", e);

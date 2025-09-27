@@ -15,8 +15,8 @@ public class DataLevel implements Runnable {
 
     @Override
     public void run() {
-        ConsoleHelper.getInstruction();
         while (true) {
+            ConsoleHelper.getInstruction();
             ExpectedDataType dataType = chooseDataType();
             String data = collectData();
             try {
