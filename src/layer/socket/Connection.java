@@ -1,4 +1,6 @@
-package layer;
+package layer.socket;
+
+import utlis.ClientConfig;
 
 import java.io.*;
 import java.net.Socket;
@@ -10,7 +12,7 @@ public class Connection implements Closeable {
 
 
     public Connection() throws IOException {
-        this.socket = new Socket("localhost", 4004);
+        this.socket = new Socket(ClientConfig.getHost(), ClientConfig.getPort());
         this.out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }

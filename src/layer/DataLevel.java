@@ -1,17 +1,18 @@
 package layer;
 
-import dto.Message;
+import layer.dto.Message;
 import layer.enums.ExpectedDataType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import utlis.ClientConfig;
 import utlis.ConsoleHelper;
 
 import java.util.concurrent.BlockingQueue;
 
 public class DataLevel implements Runnable {
-    private final BlockingQueue<Message> dataQueue;
+    private final BlockingQueue<Message> dataQueue = ClientConfig.getDataQueue();
+    private static final Logger logger = LoggerFactory.getLogger(DataLevel.class);
 
-    public DataLevel(BlockingQueue<Message> dataQueue) {
-        this.dataQueue = dataQueue;
-    }
 
     @Override
     public void run() {

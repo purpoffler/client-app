@@ -1,22 +1,17 @@
 package layer;
 
-import dto.Message;
+import layer.dto.Message;
 import layer.enums.ExpectedDataType;
+import utlis.ClientConfig;
 import utlis.ConsoleHelper;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.zip.CRC32;
 
 public class PackagingLevel implements Runnable {
-    private static final String signature = "zWj`Jjkg";
-    private final BlockingQueue<Message> dataQueue;
-    private final BlockingQueue<String> packetQueue;
-
-
-    public PackagingLevel(BlockingQueue<Message> dataQueue, BlockingQueue<String> packetQueue) {
-        this.dataQueue = dataQueue;
-        this.packetQueue = packetQueue;
-    }
+    private final String signature = ClientConfig.getSignature();
+    private final BlockingQueue<Message> dataQueue = ClientConfig.getDataQueue();
+    private final BlockingQueue<String> packetQueue = ClientConfig.getPacketQueue();
 
     // Собираем пакет
     @Override
@@ -30,10 +25,10 @@ public class PackagingLevel implements Runnable {
                 // Очищаем билдер
                 sb.setLength(0);
                 // Собираем пакет
-                sb.append(signature + "|");
-                sb.append(dataLength(data) + "|");
-                sb.append(dataType(dataType) + "|");
-                sb.append(data + "|");
+                sb.append(signature).append("|");
+                sb.append(dataLength(data)).append("|");
+                sb.append(dataType(dataType)).append("|");
+                sb.append(data).append("|");
                 sb.append(crc32(data));
                 // Отравляем пакет в очередь packetQueue
                 String packet = sb.toString();

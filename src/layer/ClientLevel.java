@@ -1,5 +1,7 @@
 package layer;
 
+import layer.socket.Connection;
+import utlis.ClientConfig;
 import utlis.ConsoleHelper;
 
 import java.io.*;
@@ -7,11 +9,7 @@ import java.net.UnknownHostException;
 import java.util.concurrent.BlockingQueue;
 
 public class ClientLevel implements Runnable {
-    private final BlockingQueue<String> packetQueue;
-
-    public ClientLevel(BlockingQueue<String> packetQueue) {
-        this.packetQueue = packetQueue;
-    }
+    private final BlockingQueue<String> packetQueue = ClientConfig.getPacketQueue();
 
     @Override
     public void run() {
