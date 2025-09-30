@@ -7,10 +7,10 @@ import utlis.ClientConfig;
 
 public class Main {
     public static void main(String[] args) throws Exception {
+        ClientConfig clientConfig = ClientConfig.getInstance();
+
         Logger log = LoggerFactory.getLogger(Main.class);
         log.info("Программа запустилась");
-
-        ClientConfig clientConfig = ClientConfig.getInstance();
 
         Thread dataThread = new Thread(new DataLevel());
         Thread packagingThread = new Thread(new PackagingLevel());
