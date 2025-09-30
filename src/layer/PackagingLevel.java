@@ -2,6 +2,8 @@ package layer;
 
 import layer.dto.Message;
 import layer.enums.ExpectedDataType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import utlis.ClientConfig;
 import utlis.ConsoleHelper;
 
@@ -12,6 +14,7 @@ public class PackagingLevel implements Runnable {
     private final String signature = ClientConfig.getSignature();
     private final BlockingQueue<Message> dataQueue = ClientConfig.getDataQueue();
     private final BlockingQueue<String> packetQueue = ClientConfig.getPacketQueue();
+    private static final Logger log = LoggerFactory.getLogger(PackagingLevel.class);
 
     // Собираем пакет
     @Override
@@ -19,23 +22,27 @@ public class PackagingLevel implements Runnable {
         StringBuilder sb = new StringBuilder();
         while (true) {
             try {
-                Message message = dataQueue.take(); // Получаем данные из очереди dataQueue
+                Message message = dataQueue.take();
                 ExpectedDataType dataType = message.getDataType();
                 String data = message.getData();
+                log.debug("Получили DTO message data: " + data + " dataType: " + dataType);
                 // Очищаем билдер
                 sb.setLength(0);
-                // Собираем пакет
+
                 sb.append(signature).append("|");
                 sb.append(dataLength(data)).append("|");
                 sb.append(dataType(dataType)).append("|");
                 sb.append(data).append("|");
                 sb.append(crc32(data));
-                // Отравляем пакет в очередь packetQueue
+
                 String packet = sb.toString();
-                packetQueue.put(packet);
-                //ConsoleHelper.writeMessage(sb.toString()); // v file nado
+                if (packetQueue.offer(packet)) {
+                    log.debug("Пакет добавлен в очередь: " + sb.toString());
+                } else {
+                    log.error("Очередь переполнена, данные утеряны");
+                }
             } catch (InterruptedException e) {
-                ConsoleHelper.writeMessage("Поток прерван во время работы с очередью");
+                log.error("Ошибка во время получения данных из dataQueue");
             }
         }
     }

@@ -11,7 +11,7 @@ import java.util.concurrent.BlockingQueue;
 
 public class DataLevel implements Runnable {
     private final BlockingQueue<Message> dataQueue = ClientConfig.getDataQueue();
-    private static final Logger logger = LoggerFactory.getLogger(DataLevel.class);
+    private static final Logger log = LoggerFactory.getLogger(DataLevel.class);
 
 
     @Override
@@ -22,8 +22,10 @@ public class DataLevel implements Runnable {
             String data = collectData();
             try {
                 dataQueue.put(new Message(data, dataType));
+                log.debug("Пользователь ввел data: " + data + " dataType: " + dataType);
             } catch (InterruptedException e) {
-                ConsoleHelper.writeMessage("Ошибка при добавлении в очередь на уровне layer.DataLevel");
+                ConsoleHelper.writeMessage(ClientConfig.getColorRed() + "Произошла ошибка, повторите ввод данных" + ClientConfig.getColorDefault());
+                log.error("Ошибка при добавлении в очередь на уровне layer.DataLevel");
             }
         }
     }
@@ -32,6 +34,7 @@ public class DataLevel implements Runnable {
         while (true) {
             String data = ConsoleHelper.readString();
             if (data.length() < 200) {
+                log.debug("Пользователь ввел данные: " + data);
                 return data;
             }
             ConsoleHelper.writeMessage("Упс, количество символов больше 200");
@@ -44,6 +47,7 @@ public class DataLevel implements Runnable {
             try {
                 ExpectedDataType type = ExpectedDataType.valueOf(dataType.toUpperCase());
                 ConsoleHelper.writeMessage(String.format("Окей, тогда собираем %s", dataType));
+                log.debug("Пользователь выбрал тип данных: " + type);
                 return type;
             } catch (IllegalArgumentException e) {
                 ConsoleHelper.writeMessage("Упс, неправильный формат данных");

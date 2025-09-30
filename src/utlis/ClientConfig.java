@@ -18,14 +18,17 @@ public final class ClientConfig {
     private static String host;
     private static int port;
     private static String colorBlue;
+    private static String colorRed;
     private static String colorDefault;
 
-    {
+    static {
         try {
             properties.load(new FileReader(filePath));
+            System.setProperty("log4j.configurationFile", "config/log4j2.xml");
             host = properties.getProperty("host");
             port = Integer.parseInt(properties.getProperty("port"));
             colorBlue = properties.getProperty("colorBlue");
+            colorRed = properties.getProperty("colorRed");
             colorDefault = properties.getProperty("colorDefault");
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -73,5 +76,9 @@ public final class ClientConfig {
 
     public static String getColorDefault() {
         return colorDefault;
+    }
+
+    public static String getColorRed() {
+        return colorRed;
     }
 }
