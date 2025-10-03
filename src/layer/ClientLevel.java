@@ -24,21 +24,21 @@ public class ClientLevel implements Runnable {
                 String serverWord = connection.receive(); // ждём, что скажет сервер
                 log.info("Получили ответ от сервера: " + serverWord);
                 if (serverWord.equalsIgnoreCase("false")) {
-                    log.error("Ошибка при отправке пакета. Попытка повторной отправки");
+                    log.warn("Ошибка при отправке пакета. Попытка повторной отправки[{}]", this.getClass());
                     connection.send(packet + "\n"); // повторно отправляем сообщение на сервер
                 }
             }
         } catch (UnknownHostException e) {
-            log.error("Неправильный хост");
+            log.error("Неправильный хост[{}]", this.getClass(), e);
             ConsoleHelper.writeSystemMessage("Неправильный хост, перезапустите приложение с исправленными параметрами");
         } catch (IOException e) {
-            log.error("Потеря соединения c сервером");
+            log.error("Потеря соединения c сервером[{}]", this.getClass(), e);
             ConsoleHelper.writeSystemMessage("Потеря соединения c сервером, перезапустите приложение");
         } catch (ClassNotFoundException e) {
-            log.error("Ошибка при получении данных от сервера");
+            log.error("Ошибка при получении данных от сервера[{}]", this.getClass(), e);
             ConsoleHelper.writeSystemMessage("Сервер не отвечает, перезапустите приложение");
         } catch (InterruptedException e) {
-            log.error("Ошибка во время получения данных из packetQueue, данные утеряны");
+            log.error("Ошибка во время получения данных из packetQueue, данные утеряны[{}]", this.getClass(), e);
             ConsoleHelper.writeSystemMessage("Ошибка, данные утеряны, перезапустите приложение");
         }
     }

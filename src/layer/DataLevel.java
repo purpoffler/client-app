@@ -25,7 +25,7 @@ public class DataLevel implements Runnable {
                 log.debug("Пользователь ввел data: " + data + " dataType: " + dataType);
             } catch (InterruptedException e) {
                 ConsoleHelper.writeMessage(ClientConfig.getColorRed() + "Произошла ошибка, повторите ввод данных" + ClientConfig.getColorDefault());
-                log.error("Ошибка при добавлении в очередь на уровне layer.DataLevel");
+                log.error("Ошибка при добавлении в очередь [{}]", this.getClass(), e);
             }
         }
     }

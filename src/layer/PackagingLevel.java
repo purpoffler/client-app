@@ -39,10 +39,10 @@ public class PackagingLevel implements Runnable {
                 if (packetQueue.offer(packet)) {
                     log.debug("Пакет добавлен в очередь: " + sb.toString());
                 } else {
-                    log.error("Очередь переполнена, данные утеряны");
+                    log.warn("Очередь переполнена, данные утеряны[{}]", this.getClass());
                 }
             } catch (InterruptedException e) {
-                log.error("Ошибка во время получения данных из dataQueue");
+                log.error("Ошибка во время получения данных из dataQueue[{}]", this.getClass(), e);
             }
         }
     }

@@ -38,7 +38,7 @@ public class ConsoleHelper {
             try {
                 return bf.readLine();
             } catch (IOException e) {
-                log.error("Ошибка при считывании строки");
+                log.error("Ошибка при считывании строки[{}]", ConsoleHelper.class, e);
             }
         }
     }
