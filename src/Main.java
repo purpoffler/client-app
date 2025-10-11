@@ -1,15 +1,17 @@
 import layer.ClientLevel;
 import layer.DataLevel;
 import layer.PackagingLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import layer.loggers.AppLogger;
+import layer.loggers.CustomLogger;
+import layer.loggers.Slf4jAdapter;
 import utlis.ClientConfig;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        ClientConfig clientConfig = ClientConfig.getInstance();
+        ClientConfig.init();
 
-        Logger log = LoggerFactory.getLogger(Main.class);
+        //AppLogger log = new Slf4jAdapter(Main.class);
+        AppLogger log = new CustomLogger(Main.class);
         log.info("Программа запустилась");
 
         Thread dataThread = new Thread(new DataLevel());

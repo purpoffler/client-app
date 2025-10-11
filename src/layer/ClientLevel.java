@@ -1,5 +1,7 @@
 package layer;
 
+import layer.loggers.AppLogger;
+import layer.loggers.CustomLogger;
 import layer.socket.Connection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,8 +13,9 @@ import java.net.UnknownHostException;
 import java.util.concurrent.BlockingQueue;
 
 public class ClientLevel implements Runnable {
-    private final BlockingQueue<String> packetQueue = ClientConfig.getPacketQueue();
-    private static final Logger log = LoggerFactory.getLogger(ClientLevel.class);
+    private final ClientConfig clientConfig = ClientConfig.getInstance();
+    private final BlockingQueue<String> packetQueue = clientConfig.getPacketQueue();
+    private static final AppLogger log = new CustomLogger(ClientLevel.class);
 
     @Override
     public void run() {

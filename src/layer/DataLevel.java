@@ -2,6 +2,9 @@ package layer;
 
 import layer.dto.Message;
 import layer.enums.ExpectedDataType;
+import layer.loggers.AppLogger;
+import layer.loggers.CustomLogger;
+import layer.loggers.Slf4jAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utlis.ClientConfig;
@@ -10,8 +13,9 @@ import utlis.ConsoleHelper;
 import java.util.concurrent.BlockingQueue;
 
 public class DataLevel implements Runnable {
-    private final BlockingQueue<Message> dataQueue = ClientConfig.getDataQueue();
-    private static final Logger log = LoggerFactory.getLogger(DataLevel.class);
+    private final ClientConfig clientConfig = ClientConfig.getInstance();
+    private final BlockingQueue<Message> dataQueue = clientConfig.getDataQueue();
+    private static final AppLogger log = new CustomLogger(DataLevel.class);
 
 
     @Override
@@ -24,7 +28,7 @@ public class DataLevel implements Runnable {
                 dataQueue.put(new Message(data, dataType));
                 log.debug("Пользователь ввел data: " + data + " dataType: " + dataType);
             } catch (InterruptedException e) {
-                ConsoleHelper.writeMessage(ClientConfig.getColorRed() + "Произошла ошибка, повторите ввод данных" + ClientConfig.getColorDefault());
+                ConsoleHelper.writeMessage(clientConfig.getColorRed() + "Произошла ошибка, повторите ввод данных" + clientConfig.getColorDefault());
                 log.error("Ошибка при добавлении в очередь [{}]", this.getClass(), e);
             }
         }

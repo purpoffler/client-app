@@ -2,6 +2,8 @@ package layer;
 
 import layer.dto.Message;
 import layer.enums.ExpectedDataType;
+import layer.loggers.AppLogger;
+import layer.loggers.CustomLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utlis.ClientConfig;
@@ -11,10 +13,11 @@ import java.util.concurrent.BlockingQueue;
 import java.util.zip.CRC32;
 
 public class PackagingLevel implements Runnable {
-    private final String signature = ClientConfig.getSignature();
-    private final BlockingQueue<Message> dataQueue = ClientConfig.getDataQueue();
-    private final BlockingQueue<String> packetQueue = ClientConfig.getPacketQueue();
-    private static final Logger log = LoggerFactory.getLogger(PackagingLevel.class);
+    private final ClientConfig clientConfig = ClientConfig.getInstance();
+    private final String signature = clientConfig.getSignature();
+    private final BlockingQueue<Message> dataQueue = clientConfig.getDataQueue();
+    private final BlockingQueue<String> packetQueue = clientConfig.getPacketQueue();
+    private static final AppLogger log = new CustomLogger(PackagingLevel.class);
 
     // Собираем пакет
     @Override
@@ -36,13 +39,17 @@ public class PackagingLevel implements Runnable {
                 sb.append(crc32(data));
 
                 String packet = sb.toString();
-                if (packetQueue.offer(packet)) {
-                    log.debug("Пакет добавлен в очередь: " + sb.toString());
-                } else {
-                    log.warn("Очередь переполнена, данные утеряны[{}]", this.getClass());
-                }
+                throw new InterruptedException();
+//                if (packetQueue.offer(packet)) {
+//                    log.debug("Пакет добавлен в очередь: " + sb.toString());
+//                } else {
+//                    log.warn("Очередь переполнена, данные утеряны[{}]", this.getClass());
+//                }
+
+
             } catch (InterruptedException e) {
                 log.error("Ошибка во время получения данных из dataQueue[{}]", this.getClass(), e);
+                ConsoleHelper.writeSystemMessage("Неизвестная ошибка, перезапустите приложение");
             }
         }
     }

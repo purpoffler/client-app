@@ -1,6 +1,7 @@
 package utlis;
 
-import layer.DataLevel;
+import layer.loggers.AppLogger;
+import layer.loggers.CustomLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,8 +11,9 @@ import java.io.InputStreamReader;
 
 
 public class ConsoleHelper {
+    private static ClientConfig clientConfig = ClientConfig.getInstance();
     private static final BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-    private static final Logger log = LoggerFactory.getLogger(ConsoleHelper.class);
+    private static final AppLogger log = new CustomLogger(ConsoleHelper.class);
 
     public static void getInstruction() {
         System.out.println();
@@ -30,7 +32,7 @@ public class ConsoleHelper {
     }
 
     public static void writeSystemMessage(String message) {
-        System.out.println(ClientConfig.getColorBlue() + "Системное сообщение:\n" + message + ClientConfig.getColorDefault() + "\n");
+        System.out.println(clientConfig.getColorBlue() + "Системное сообщение:\n" + message + clientConfig.getColorDefault() + "\n");
     }
 
     public static String readString() {

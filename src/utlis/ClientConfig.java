@@ -1,6 +1,10 @@
 package utlis;
 
 import layer.dto.Message;
+import layer.loggers.AppLogger;
+import layer.loggers.CustomLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -10,28 +14,38 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public final class ClientConfig {
     private static ClientConfig instance;
-    private static final String signature = "zWj`Jjkg";
-    private static final BlockingQueue<Message> dataQueue = new LinkedBlockingQueue<>();
-    private static final BlockingQueue<String> packetQueue = new LinkedBlockingQueue<>();
-    private static Properties properties = new Properties();
-    private static String filePath = "src/config/system.properties";
-    private static String host;
-    private static int port;
-    private static String colorBlue;
-    private static String colorRed;
-    private static String colorDefault;
+    private AppLogger log;
+    private final String signature = "zWj`Jjkg";
+    private final BlockingQueue<Message> dataQueue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<String> packetQueue = new LinkedBlockingQueue<>();
+    private final String filePath = "src/config/system.properties";
 
-    static {
+
+    private String host;
+    private int port;
+    private String colorBlue;
+    private String colorRed;
+    private String colorDefault;
+    private String logFileName;
+
+
+    public static void init() {
+        if (instance == null) {
+            instance = new ClientConfig();
+            System.setProperty("log4j.configurationFile", "src/config/log4j2.xml");
+            instance.log = new CustomLogger(ClientConfig.class);
+        }
         try {
-            properties.load(new FileReader(filePath));
-            System.setProperty("log4j.configurationFile", "config/log4j2.xml");
-            host = properties.getProperty("host");
-            port = Integer.parseInt(properties.getProperty("port"));
-            colorBlue = properties.getProperty("colorBlue");
-            colorRed = properties.getProperty("colorRed");
-            colorDefault = properties.getProperty("colorDefault");
+            Properties properties = new Properties();
+            properties.load(new FileReader(instance.filePath));
+            instance.host = properties.getProperty("host");
+            instance.port = Integer.parseInt(properties.getProperty("port"));
+            instance.colorBlue = properties.getProperty("colorBlue");
+            instance.colorRed = properties.getProperty("colorRed");
+            instance.colorDefault = properties.getProperty("colorDefault");
+            instance.logFileName = properties.getProperty("logFileName");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            instance.log.error("Файл не найден [{}]", instance.filePath, e);
         }
     }
 
@@ -40,45 +54,45 @@ public final class ClientConfig {
 
     public static ClientConfig getInstance() {
         if (instance == null) {
-            instance = new ClientConfig();
+            instance.log.warn("Синглтон еще не инициализирован, треш. А должен как бы [{}]", instance.getClass());
+            ConsoleHelper.writeSystemMessage("Произошла ошибка непредвиденная ошибка, перезапустите приложение");
         }
         return instance;
     }
 
-    public static BlockingQueue<Message> getDataQueue() {
+    public BlockingQueue<Message> getDataQueue() {
         return dataQueue;
     }
 
-    public static BlockingQueue<String> getPacketQueue() {
+    public BlockingQueue<String> getPacketQueue() {
         return packetQueue;
     }
 
-    public static String getSignature() {
+    public String getSignature() {
         return signature;
     }
 
-
-    public static String getFilePath() {
-        return filePath;
-    }
-
-    public static String getHost() {
+    public String getHost() {
         return host;
     }
 
-    public static int getPort() {
+    public int getPort() {
         return port;
     }
 
-    public static String getColorBlue() {
+    public String getColorBlue() {
         return colorBlue;
     }
 
-    public static String getColorDefault() {
+    public String getColorDefault() {
         return colorDefault;
     }
 
-    public static String getColorRed() {
+    public String getColorRed() {
         return colorRed;
+    }
+
+    public  String getLogFileName() {
+        return logFileName;
     }
 }
