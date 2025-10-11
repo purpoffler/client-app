@@ -7,11 +7,12 @@ import layer.loggers.Slf4jAdapter;
 import utlis.ClientConfig;
 
 public class Main {
+    //private  static AppLogger log = new Slf4jAdapter(Main.class);
+    private static AppLogger log = new CustomLogger(Main.class);
+
     public static void main(String[] args) throws Exception {
         ClientConfig.init();
 
-        //AppLogger log = new Slf4jAdapter(Main.class);
-        AppLogger log = new CustomLogger(Main.class);
         log.info("Программа запустилась");
 
         Thread dataThread = new Thread(new DataLevel());

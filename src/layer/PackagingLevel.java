@@ -45,8 +45,6 @@ public class PackagingLevel implements Runnable {
                 } else {
                     log.warn("Очередь переполнена, данные утеряны[{}]", this.getClass());
                 }
-
-
             } catch (InterruptedException e) {
                 log.error("Ошибка во время получения данных из dataQueue[{}]", this.getClass(), e);
                 ConsoleHelper.writeSystemMessage("Неизвестная ошибка, перезапустите приложение");
