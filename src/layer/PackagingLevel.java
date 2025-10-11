@@ -39,12 +39,12 @@ public class PackagingLevel implements Runnable {
                 sb.append(crc32(data));
 
                 String packet = sb.toString();
-                throw new InterruptedException();
-//                if (packetQueue.offer(packet)) {
-//                    log.debug("Пакет добавлен в очередь: " + sb.toString());
-//                } else {
-//                    log.warn("Очередь переполнена, данные утеряны[{}]", this.getClass());
-//                }
+
+                if (packetQueue.offer(packet)) {
+                    log.debug("Пакет добавлен в очередь: " + sb.toString());
+                } else {
+                    log.warn("Очередь переполнена, данные утеряны[{}]", this.getClass());
+                }
 
 
             } catch (InterruptedException e) {
