@@ -12,7 +12,7 @@ import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public final class ClientConfig {
+public class ClientConfig {
     private static ClientConfig instance;
     private AppLogger log;
     private final String signature = "zWj`Jjkg";
@@ -92,7 +92,7 @@ public final class ClientConfig {
         return colorRed;
     }
 
-    public  String getLogFileName() {
+    public String getLogFileName() {
         return logFileName;
     }
 }
