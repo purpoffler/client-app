@@ -4,20 +4,22 @@ import utlis.ClientConfig;
 import utlis.ConsoleHelper;
 import utlis.DateCalculator;
 
-import java.io.File;
+
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
 public class CustomLogger implements AppLogger {
-    private ClientConfig clientConfig = ClientConfig.getInstance();
-    private String logFileName;
-    private String className;
+    private ClientConfig clientConfig;
+    private final String logFileName;
+    private final String className;
 
     public CustomLogger(Class<?> className) {
         this.className = className.getSimpleName();
+        this.clientConfig = ClientConfig.getInstance();
         this.logFileName = clientConfig.getLogFileName();
     }
 
@@ -33,19 +35,21 @@ public class CustomLogger implements AppLogger {
     }
 
     private void write(String message) {
-        File file = getFile(logFileName);
-        try (FileWriter writer = new FileWriter(file, true)) {
+        Path pathToLogFile = Paths.get(logFileName);
+        if (!Files.exists(pathToLogFile.getParent())) {
+            try {
+                Files.createDirectory(pathToLogFile.getParent());
+            } catch (IOException e) {
+                ConsoleHelper.writeSystemMessage("Не удалось создать директорию для логов. Перезапустите приложение");
+            }
+        }
+        try (FileWriter writer = new FileWriter(pathToLogFile.toFile(), true)) {
             writer.write(message);
             writer.append('\n');
             writer.flush();
         } catch (IOException e) {
             ConsoleHelper.writeSystemMessage("Возникли проблемы с записью логов - их не будет");
         }
-    }
-
-    public File getFile(String fileName) {
-        Path path = Paths.get(".", fileName).toAbsolutePath();
-        return new File(path.toUri());
     }
 
     @Override
@@ -84,8 +88,7 @@ public class CustomLogger implements AppLogger {
     }
 
     private void writeStackTrace(Throwable t) {
-        File file = getFile(logFileName);
-        try (FileWriter writer = new FileWriter(file, true)) {
+        try (FileWriter writer = new FileWriter(Paths.get(logFileName).toFile(), true)) {
             writer.write(t.toString());
             writer.write(System.lineSeparator());
             for (StackTraceElement el : t.getStackTrace()) {
@@ -96,5 +99,4 @@ public class CustomLogger implements AppLogger {
             ConsoleHelper.writeSystemMessage("Ошибка при записи стека исключения");
         }
     }
-
 }

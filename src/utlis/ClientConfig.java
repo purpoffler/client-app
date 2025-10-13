@@ -18,7 +18,7 @@ public class ClientConfig {
     private final String signature = "zWj`Jjkg";
     private final BlockingQueue<Message> dataQueue = new LinkedBlockingQueue<>();
     private final BlockingQueue<String> packetQueue = new LinkedBlockingQueue<>();
-    private final String filePath = "src/config/system.properties";
+    private final static String filePath = "src/config/system.properties";
 
 
     private String host;
@@ -32,30 +32,29 @@ public class ClientConfig {
     public static void init() {
         if (instance == null) {
             instance = new ClientConfig();
-            System.setProperty("log4j.configurationFile", "src/config/log4j2.xml");
-            instance.log = new CustomLogger(ClientConfig.class);
-        }
-        try {
-            Properties properties = new Properties();
-            properties.load(new FileReader(instance.filePath));
-            instance.host = properties.getProperty("host");
-            instance.port = Integer.parseInt(properties.getProperty("port"));
-            instance.colorBlue = properties.getProperty("colorBlue");
-            instance.colorRed = properties.getProperty("colorRed");
-            instance.colorDefault = properties.getProperty("colorDefault");
-            instance.logFileName = properties.getProperty("logFileName");
-        } catch (IOException e) {
-            instance.log.error("Файл не найден [{}]", instance.filePath, e);
         }
     }
 
     private ClientConfig() {
+        System.setProperty("log4j.configurationFile", "src/config/log4j2.xml");
+        this.log = new CustomLogger(ClientConfig.class);
+        try {
+            Properties properties = new Properties();
+            properties.load(new FileReader(filePath));
+            this.host = properties.getProperty("host");
+            this.port = Integer.parseInt(properties.getProperty("port"));
+            this.colorBlue = properties.getProperty("colorBlue");
+            this.colorRed = properties.getProperty("colorRed");
+            this.colorDefault = properties.getProperty("colorDefault");
+            this.logFileName = properties.getProperty("logFileName");
+        } catch (IOException e) {
+            this.log.error("Файл не найден [{}]", filePath, e);
+        }
     }
 
     public static ClientConfig getInstance() {
         if (instance == null) {
-            instance.log.warn("Синглтон еще не инициализирован, треш. А должен как бы [{}]", instance.getClass());
-            ConsoleHelper.writeSystemMessage("Произошла ошибка непредвиденная ошибка, перезапустите приложение");
+            ConsoleHelper.writeSystemMessage("Синглтон еще не инициализирован, треш. А должен как бы. Сначала надо вызвать ClientConfig.init()");
         }
         return instance;
     }
