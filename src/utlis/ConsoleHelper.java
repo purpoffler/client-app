@@ -11,7 +11,7 @@ import java.io.InputStreamReader;
 
 
 public class ConsoleHelper {
-    private static ClientConfig clientConfig = ClientConfig.getInstance();
+    private static final ClientConfig clientConfig = ClientConfig.getInstance();
     private static final BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
     private static final AppLogger log = new CustomLogger(ConsoleHelper.class);
 
@@ -23,6 +23,7 @@ public class ConsoleHelper {
                     CONSOLE – сервер выведет данные в консоль;
                     PLAIN – сервер сохранит данные в обычный файл свободного формата;
                     JSON – сервер сохранить данные в файл с типом .json и json-форматированием;
+                    EXIT - если хочешь закончить работу.
                 """);
         System.out.println("Введи формат, в котором ты хочешь отправить данные, например, CONSOLE");
     }

@@ -23,9 +23,14 @@ public class PackagingLevel implements Runnable {
     @Override
     public void run() {
         StringBuilder sb = new StringBuilder();
-        while (true) {
+        while (clientConfig.isContinue()) {
             try {
                 Message message = dataQueue.take();
+                if (!message.isContinue()) {
+                    packetQueue.put("false");
+                    log.info("Поток прерван {}", this.getClass());
+                    break;
+                }
                 ExpectedDataType dataType = message.getDataType();
                 String data = message.getData();
                 log.debug("Получили DTO message data: " + data + " dataType: " + dataType);

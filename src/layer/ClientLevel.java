@@ -9,6 +9,7 @@ import utlis.ClientConfig;
 import utlis.ConsoleHelper;
 
 import java.io.*;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.concurrent.BlockingQueue;
 
@@ -20,15 +21,23 @@ public class ClientLevel implements Runnable {
     @Override
     public void run() {
         try (Connection connection = new Connection()) {
-            while (true) {
-                String packet = packetQueue.take();// Получаем данные из очереди dataQueue
+            while (clientConfig.isContinue()) {
+                String packet = packetQueue.take();
+                if (packet.equalsIgnoreCase("false")) {
+                    log.info("Поток прерван {}", this.getClass());
+                    break;
+                }
                 log.debug("Из очереди packetQueue получили пакет: " + packet);
                 connection.send(packet + "\n"); // отправляем сообщение на сервер
-                String serverWord = connection.receive(); // ждём, что скажет сервер
-                log.info("Получили ответ от сервера: " + serverWord);
-                if (serverWord.equalsIgnoreCase("false")) {
-                    log.warn("Ошибка при отправке пакета. Попытка повторной отправки[{}]", this.getClass());
-                    connection.send(packet + "\n"); // повторно отправляем сообщение на сервер
+                try {
+                    String serverWord = connection.receive();
+                    log.info("Ответ от сервера: {}", serverWord);
+                    if (serverWord.equalsIgnoreCase("false")) {
+                        log.warn("Ошибка при отправке пакета. Попытка повторной отправки[{}]", this.getClass());
+                        connection.send(packet + "\n"); // повторно отправляем сообщение на сервер
+                    }
+                } catch (SocketTimeoutException e) {
+                    log.warn("Таймаут при ожидании ответа от сервера");
                 }
             }
         } catch (UnknownHostException e) {

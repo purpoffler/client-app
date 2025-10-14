@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 
 public class CustomLogger implements AppLogger {
-    private ClientConfig clientConfig;
+    private final ClientConfig clientConfig;
     private final String logFileName;
     private final String className;
 

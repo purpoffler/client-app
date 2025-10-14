@@ -3,10 +3,10 @@ package layer.loggers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Slf4jAdapter implements AppLogger{
+public class Slf4jAdapter implements AppLogger {
     private final Logger log;
 
-    public Slf4jAdapter(Class<?> className){
+    public Slf4jAdapter(Class<?> className) {
         this.log = LoggerFactory.getLogger(className);
     }
 

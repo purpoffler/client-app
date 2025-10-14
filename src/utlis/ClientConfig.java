@@ -14,12 +14,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class ClientConfig {
     private static ClientConfig instance;
-    private AppLogger log;
     private final String signature = "zWj`Jjkg";
     private final BlockingQueue<Message> dataQueue = new LinkedBlockingQueue<>();
     private final BlockingQueue<String> packetQueue = new LinkedBlockingQueue<>();
     private final static String filePath = "src/config/system.properties";
-
+    private volatile boolean isContinue = true;
 
     private String host;
     private int port;
@@ -27,8 +26,7 @@ public class ClientConfig {
     private String colorRed;
     private String colorDefault;
     private String logFileName;
-
-
+    
     public static void init() {
         if (instance == null) {
             instance = new ClientConfig();
@@ -37,7 +35,6 @@ public class ClientConfig {
 
     private ClientConfig() {
         System.setProperty("log4j.configurationFile", "src/config/log4j2.xml");
-        this.log = new CustomLogger(ClientConfig.class);
         try {
             Properties properties = new Properties();
             properties.load(new FileReader(filePath));
@@ -48,7 +45,7 @@ public class ClientConfig {
             this.colorDefault = properties.getProperty("colorDefault");
             this.logFileName = properties.getProperty("logFileName");
         } catch (IOException e) {
-            this.log.error("Файл не найден [{}]", filePath, e);
+            ConsoleHelper.writeMessage("Файл c property не найден");
         }
     }
 
@@ -93,5 +90,13 @@ public class ClientConfig {
 
     public String getLogFileName() {
         return logFileName;
+    }
+
+    public boolean isContinue() {
+        return isContinue;
+    }
+
+    public void stop() {
+        this.isContinue = false;
     }
 }

@@ -17,14 +17,20 @@ public class DataLevel implements Runnable {
     private final BlockingQueue<Message> dataQueue = clientConfig.getDataQueue();
     private static final AppLogger log = new CustomLogger(DataLevel.class);
 
-
     @Override
     public void run() {
         while (true) {
             ConsoleHelper.getInstruction();
             ExpectedDataType dataType = chooseDataType();
-            String data = collectData();
             try {
+                if (dataType == null) {
+                    clientConfig.stop();
+                    dataQueue.put(new Message(false));
+                    log.info("Поток прерван {}", this.getClass());
+                    ConsoleHelper.writeMessage("Программа завершает работу, до новых встреч)");
+                    break;
+                }
+                String data = collectData();
                 dataQueue.put(new Message(data, dataType));
                 log.debug("Пользователь ввел data: " + data + " dataType: " + dataType);
             } catch (InterruptedException e) {
@@ -48,6 +54,9 @@ public class DataLevel implements Runnable {
     private ExpectedDataType chooseDataType() {
         while (true) {
             String dataType = ConsoleHelper.readString();
+            if (dataType.equalsIgnoreCase("EXIT")) {
+                return null;
+            }
             try {
                 ExpectedDataType type = ExpectedDataType.valueOf(dataType.toUpperCase());
                 ConsoleHelper.writeMessage(String.format("Окей, тогда собираем %s", dataType));
