@@ -2,12 +2,7 @@ package layer;
 
 import layer.dto.Message;
 import layer.enums.ExpectedDataType;
-import layer.loggers.AppLogger;
-import layer.loggers.CustomLogger;
-import layer.loggers.Slf4jAdapter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import utlis.ClientConfig;
+import config.ClientConfig;
 import utlis.ConsoleHelper;
 
 import java.util.concurrent.BlockingQueue;
@@ -27,14 +22,14 @@ public class DataLevel implements Runnable {
                     clientConfig.stop();
                     dataQueue.put(new Message(false));
                     log.info("Поток прерван {}", this.getClass());
-                    ConsoleHelper.writeMessage("Программа завершает работу, до новых встреч)");
+                    ConsoleHelper.write("Программа завершает работу, до новых встреч)");
                     break;
                 }
                 String data = collectData();
                 dataQueue.put(new Message(data, dataType));
                 log.debug("Пользователь ввел data: " + data + " dataType: " + dataType);
             } catch (InterruptedException e) {
-                ConsoleHelper.writeMessage(clientConfig.getColorRed() + "Произошла ошибка, повторите ввод данных" + clientConfig.getColorDefault());
+                ConsoleHelper.write(clientConfig.getColorRed() + "Произошла ошибка, повторите ввод данных" + clientConfig.getColorDefault());
                 log.error("Ошибка при добавлении в очередь [{}]", this.getClass(), e);
             }
         }
@@ -47,7 +42,7 @@ public class DataLevel implements Runnable {
                 log.debug("Пользователь ввел данные: " + data);
                 return data;
             }
-            ConsoleHelper.writeMessage("Упс, количество символов больше 200");
+            ConsoleHelper.write("Упс, количество символов больше 200");
         }
     }
 
@@ -59,11 +54,11 @@ public class DataLevel implements Runnable {
             }
             try {
                 ExpectedDataType type = ExpectedDataType.valueOf(dataType.toUpperCase());
-                ConsoleHelper.writeMessage(String.format("Окей, тогда собираем %s", dataType));
+                ConsoleHelper.write(String.format("Окей, тогда собираем %s", dataType));
                 log.debug("Пользователь выбрал тип данных: " + type);
                 return type;
             } catch (IllegalArgumentException e) {
-                ConsoleHelper.writeMessage("Упс, неправильный формат данных");
+                ConsoleHelper.write("Упс, неправильный формат данных");
             }
         }
     }

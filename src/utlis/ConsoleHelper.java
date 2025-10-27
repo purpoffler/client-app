@@ -1,19 +1,15 @@
 package utlis;
 
-import layer.loggers.AppLogger;
-import layer.loggers.CustomLogger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import config.ClientConfig;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 
-public class ConsoleHelper {
+public class ConsoleHelper{
     private static final ClientConfig clientConfig = ClientConfig.getInstance();
     private static final BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-    private static final AppLogger log = new CustomLogger(ConsoleHelper.class);
 
     public static void getInstruction() {
         System.out.println();
@@ -28,7 +24,7 @@ public class ConsoleHelper {
         System.out.println("Введи формат, в котором ты хочешь отправить данные, например, CONSOLE");
     }
 
-    public static void writeMessage(String message) {
+    public static void write(String message) {
         System.out.println(message);
     }
 

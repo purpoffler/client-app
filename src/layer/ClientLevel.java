@@ -1,11 +1,7 @@
 package layer;
 
-import layer.loggers.AppLogger;
-import layer.loggers.CustomLogger;
 import layer.socket.Connection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import utlis.ClientConfig;
+import config.ClientConfig;
 import utlis.ConsoleHelper;
 
 import java.io.*;

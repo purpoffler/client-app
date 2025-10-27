@@ -2,9 +2,7 @@ package layer.dto;
 
 import layer.enums.ExpectedDataType;
 
-import java.io.Serializable;
-
-public class Message implements Serializable {
+public class Message {
     private final String data;
     private final ExpectedDataType dataType;
     private final boolean isContinue;
