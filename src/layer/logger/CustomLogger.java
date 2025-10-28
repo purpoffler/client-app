@@ -27,14 +27,15 @@ public class CustomLogger {
 
     public void error(String message, Throwable t) {
         writeToFile(format(message, "[ERROR]"));
-        writeToFile(t.toString());
+        String header = "Exception in thread \"" + Thread.currentThread().getName() + "\" " + t.toString();
+        writeToFile(header);
         for (StackTraceElement ste : t.getStackTrace()) {
             writeToFile(String.format("\t %s", ste));
         }
     }
 
     public String format(String message, String logLvl) {
-        return String.format("[%s] %s %s %s", DateCalculator.getDate(), logLvl, className, message);
+        return String.format("[%s] %s %s - %s", DateCalculator.getDate(), logLvl, className, message);
     }
 
     private void writeToFile(String output) {

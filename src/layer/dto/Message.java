@@ -5,18 +5,15 @@ import layer.enums.ExpectedDataType;
 public class Message {
     private final String data;
     private final ExpectedDataType dataType;
-    private final boolean isContinue;
 
     public Message(String data, ExpectedDataType dataType) {
         this.data = data;
         this.dataType = dataType;
-        this.isContinue = true;
     }
 
     public Message(boolean isContinue) {
         this.data = null;
         this.dataType = null;
-        this.isContinue = isContinue;
     }
 
     public String getData() {
@@ -25,9 +22,5 @@ public class Message {
 
     public ExpectedDataType getDataType() {
         return dataType;
-    }
-
-    public boolean isContinue() {
-        return isContinue;
     }
 }

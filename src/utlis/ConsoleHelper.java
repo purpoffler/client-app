@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 
-public class ConsoleHelper{
+public class ConsoleHelper {
     private static final ClientConfig clientConfig = ClientConfig.getInstance();
     private static final BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
 
@@ -37,7 +37,7 @@ public class ConsoleHelper{
             try {
                 return bf.readLine();
             } catch (IOException e) {
-                log.error("Ошибка при считывании строки[{}]", ConsoleHelper.class, e);
+                ConsoleHelper.writeSystemMessage("Ошибка при считывании строки \n Повторите ввод сначала");
             }
         }
     }

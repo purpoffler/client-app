@@ -10,11 +10,11 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class ClientConfig {
-    private static ClientConfig instance;
-    private final String signature = "zWj`Jjkg";
+    private volatile static ClientConfig instance;
+    private static final String SIGNATURE = "zWj`Jjkg";
+    private static final String CONFIG_FILE_PATH = "src/config/system.properties";
     private final BlockingQueue<Message> dataQueue = new LinkedBlockingQueue<>();
     private final BlockingQueue<String> packetQueue = new LinkedBlockingQueue<>();
-    private final static String configFilePath = "src/config/system.properties";
     private volatile boolean isContinue = true;
 
     private String host;
@@ -27,13 +27,13 @@ public class ClientConfig {
     private ClientConfig() {
         try {
             Properties properties = new Properties();
-            properties.load(new FileReader(configFilePath));
-            this.host = properties.getProperty("host");
-            this.port = Integer.parseInt(properties.getProperty("port"));
-            this.colorBlue = properties.getProperty("colorBlue");
-            this.colorRed = properties.getProperty("colorRed");
-            this.colorDefault = properties.getProperty("colorDefault");
-            this.logFilePath = properties.getProperty("logFilePath");
+            properties.load(new FileReader(CONFIG_FILE_PATH));
+            this.host = properties.getProperty("host", "localhost");
+            this.port = Integer.parseInt(properties.getProperty("port", "4004"));
+            this.colorBlue = properties.getProperty("colorBlue", "");
+            this.colorRed = properties.getProperty("colorRed", "");
+            this.colorDefault = properties.getProperty("colorDefault", "");
+            this.logFilePath = properties.getProperty("logFilePath", "");
         } catch (IOException e) {
             ConsoleHelper.write("Файл c property не найден");
         }
@@ -41,7 +41,11 @@ public class ClientConfig {
 
     public static ClientConfig getInstance() {
         if (instance == null) {
-            instance = new ClientConfig();
+            synchronized (ClientConfig.class) {
+                if (instance == null) {
+                    instance = new ClientConfig();
+                }
+            }
         }
         return instance;
     }
@@ -55,7 +59,7 @@ public class ClientConfig {
     }
 
     public String getSignature() {
-        return signature;
+        return SIGNATURE;
     }
 
     public String getHost() {
