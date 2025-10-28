@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 
 
 public class ConsoleHelper {
-    private static final ClientConfig clientConfig = ClientConfig.getInstance();
     private static final BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
 
     public static void getInstruction() {
@@ -29,7 +28,7 @@ public class ConsoleHelper {
     }
 
     public static void writeSystemMessage(String message) {
-        System.out.println(clientConfig.getColorBlue() + "Системное сообщение:\n" + message + clientConfig.getColorDefault() + "\n");
+        System.out.println(ClientConfig.getInstance().getColorBlue() + "Системное сообщение:\n" + message + ClientConfig.getInstance().getColorDefault() + "\n");
     }
 
     public static String readString() {
