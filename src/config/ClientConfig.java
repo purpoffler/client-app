@@ -12,7 +12,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class ClientConfig {
     private volatile static ClientConfig instance;
     private static final String SIGNATURE = "zWj`Jjkg";
-    private static final String CONFIG_FILE_PATH = "src/config/system.properties";
+    private static final String CONFIG_FILE_PATH = "src/config/application.properties";
     private final BlockingQueue<Message> dataQueue = new LinkedBlockingQueue<>();
     private final BlockingQueue<String> packetQueue = new LinkedBlockingQueue<>();
     private volatile boolean isContinue = true;
@@ -35,17 +35,13 @@ public class ClientConfig {
             this.colorDefault = properties.getProperty("colorDefault", "");
             this.logFilePath = properties.getProperty("logFilePath", "");
         } catch (IOException e) {
-            ConsoleHelper.write("Файл c property не найден");
+            ConsoleHelper.writeMessage("Файл c property не найден");
         }
     }
 
     public static ClientConfig getInstance() {
         if (instance == null) {
-            synchronized (ClientConfig.class) {
-                if (instance == null) {
-                    instance = new ClientConfig();
-                }
-            }
+            instance = new ClientConfig();
         }
         return instance;
     }

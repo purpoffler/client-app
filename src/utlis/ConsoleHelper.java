@@ -23,7 +23,7 @@ public class ConsoleHelper {
         System.out.println("Введи формат, в котором ты хочешь отправить данные, например, CONSOLE");
     }
 
-    public static void write(String message) {
+    public static void writeMessage(String message) {
         System.out.println(message);
     }
 

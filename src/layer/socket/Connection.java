@@ -4,7 +4,6 @@ import config.ClientConfig;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 
 public class Connection implements Closeable {
     private final Socket socket;
@@ -23,7 +22,7 @@ public class Connection implements Closeable {
         out.flush();
     }
 
-    public String receive() throws IOException, ClassNotFoundException, SocketTimeoutException {
+    public String receive() throws IOException{
         return in.readLine();
     }
 

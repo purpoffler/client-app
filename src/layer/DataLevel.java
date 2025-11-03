@@ -1,68 +1,67 @@
 package layer;
 
+import config.ClientConfig;
+import exceptions.ExitException;
 import layer.dto.Message;
 import layer.enums.ExpectedDataType;
-import config.ClientConfig;
 import layer.logger.CustomLogger;
 import utlis.ConsoleHelper;
 
-import java.util.concurrent.BlockingQueue;
-
 public class DataLevel implements Runnable {
     private final ClientConfig clientConfig = ClientConfig.getInstance();
-    private final BlockingQueue<Message> dataQueue = clientConfig.getDataQueue();
     private static final CustomLogger log = new CustomLogger(DataLevel.class.getSimpleName());
 
     @Override
     public void run() {
         while (clientConfig.isContinue()) {
-            ConsoleHelper.getInstruction();
-            ExpectedDataType dataType = chooseDataType();
-            if (dataType == null) { break; }
             try {
+                ConsoleHelper.getInstruction();
+                ExpectedDataType dataType = chooseDataType();
                 String data = collectData();
-                dataQueue.put(new Message(data, dataType));
+                clientConfig.getDataQueue().put(new Message(data, dataType));
                 log.debug("Пользователь ввел data: " + data + " dataType: " + dataType);
             } catch (InterruptedException e) {
-                ConsoleHelper.write(clientConfig.getColorRed() + "Произошла ошибка, повторите ввод данных" + clientConfig.getColorDefault());
+                ConsoleHelper.writeMessage(clientConfig.getColorRed() + "Произошла ошибка, повторите ввод данных" + clientConfig.getColorDefault());
                 log.error("Ошибка при добавлении в очередь", e);
+            } catch (ExitException e) {
+                clientConfig.stop();
+                ConsoleHelper.writeMessage("Завершаем работу приложения");
+                log.info("Пользователь решил завершить работу");
+                break;
             }
         }
     }
 
-    private String collectData() {
+    private String collectData() throws ExitException {
         while (true) {
             String data = ConsoleHelper.readString();
+            checkExitCommand(data);
             if (data.length() < 200) {
                 log.debug("Пользователь ввел данные: " + data);
                 return data;
             }
-            ConsoleHelper.write("Упс, количество символов больше 200");
+            ConsoleHelper.writeMessage("Упс, количество символов больше 200");
         }
     }
 
-    private ExpectedDataType chooseDataType() {
+    private ExpectedDataType chooseDataType() throws ExitException {
         while (true) {
             try {
                 String userInput = ConsoleHelper.readString();
-                if (checkExitInput(userInput)){ return null; }
+                checkExitCommand(userInput);
                 ExpectedDataType dataType = ExpectedDataType.valueOf(userInput.toUpperCase());
-                ConsoleHelper.write(String.format("Окей, тогда собираем %s", dataType));
+                ConsoleHelper.writeMessage(String.format("Окей, тогда собираем %s", dataType));
                 log.debug("Пользователь выбрал тип данных: " + dataType);
                 return dataType;
             } catch (IllegalArgumentException e) {
-                ConsoleHelper.write("Упс, неправильный формат данных");
+                ConsoleHelper.writeMessage("Упс, неправильный формат данных, повторите ввод");
             }
         }
     }
 
-    private boolean checkExitInput(String dataType) {
-        if (dataType.equalsIgnoreCase("EXIT")) {
-            clientConfig.stop();
-            ConsoleHelper.write("Завершаем работу приложения");
-            log.info("Пользователь решил завершить работу");
-            return true;
+    private void checkExitCommand(String userInput) throws ExitException {
+        if (userInput.equalsIgnoreCase("EXIT")) {
+            throw new ExitException("Пользователь решил завершить программу");
         }
-        return false;
     }
 }
