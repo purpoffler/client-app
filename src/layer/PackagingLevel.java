@@ -33,7 +33,6 @@ public class PackagingLevel implements Runnable {
     private String buildPacket(StringBuilder sb, String data, ExpectedDataType dataType) {
         // Очищаем билдер
         sb.setLength(0);
-
         sb.append(clientConfig.getSignature()).append("|");
         sb.append(dataLength(data)).append("|");
         sb.append(dataType(dataType)).append("|");

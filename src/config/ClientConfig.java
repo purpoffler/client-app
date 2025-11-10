@@ -10,8 +10,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class ClientConfig {
-    private volatile static ClientConfig instance;
-    private static final String SIGNATURE = "zWj`Jjkg";
+    private static ClientConfig INSTANCE;
     private static final String CONFIG_FILE_PATH = "src/config/application.properties";
     private final BlockingQueue<Message> dataQueue = new LinkedBlockingQueue<>();
     private final BlockingQueue<String> packetQueue = new LinkedBlockingQueue<>();
@@ -23,6 +22,7 @@ public class ClientConfig {
     private String colorRed;
     private String colorDefault;
     private String logFilePath;
+    private String signature;
 
     private ClientConfig() {
         try {
@@ -34,16 +34,17 @@ public class ClientConfig {
             this.colorRed = properties.getProperty("colorRed", "");
             this.colorDefault = properties.getProperty("colorDefault", "");
             this.logFilePath = properties.getProperty("logFilePath", "");
+            this.signature = "zWj`Jjkg";
         } catch (IOException e) {
             ConsoleHelper.writeMessage("Файл c property не найден");
         }
     }
 
     public static ClientConfig getInstance() {
-        if (instance == null) {
-            instance = new ClientConfig();
+        if (INSTANCE == null) {
+            INSTANCE = new ClientConfig();
         }
-        return instance;
+        return INSTANCE;
     }
 
     public BlockingQueue<Message> getDataQueue() {
@@ -52,10 +53,6 @@ public class ClientConfig {
 
     public BlockingQueue<String> getPacketQueue() {
         return packetQueue;
-    }
-
-    public String getSignature() {
-        return SIGNATURE;
     }
 
     public String getHost() {
@@ -88,5 +85,9 @@ public class ClientConfig {
 
     public void stop() {
         this.isContinue = false;
+    }
+
+    public String getSignature() {
+        return signature;
     }
 }

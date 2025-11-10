@@ -7,6 +7,7 @@ import utlis.ConsoleHelper;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.concurrent.TimeUnit;
 
 public class ClientLevel implements Runnable {
     private final ClientConfig clientConfig = ClientConfig.getInstance();
@@ -16,10 +17,10 @@ public class ClientLevel implements Runnable {
     public void run() {
         try (Connection connection = new Connection()) {
             while (clientConfig.isContinue()) {
-                String packet = clientConfig.getPacketQueue().poll();
+                String packet = clientConfig.getPacketQueue().poll(500, TimeUnit.MILLISECONDS);
                 if (packet != null) {
-                    log.debug("Из очереди packetQueue получили пакет: " + packet);
                     connection.send(packet + "\n");
+                    log.debug("Отправляем пакет серверу" + packet);
                     String serverWord = connection.receive();
                     log.info("Ответ от сервера" + serverWord);
                     // Повторная отправка
@@ -35,6 +36,9 @@ public class ClientLevel implements Runnable {
         } catch (IOException e) {
             log.error("Потеря соединения c сервером", e);
             ConsoleHelper.writeSystemMessage("Потеря соединения c сервером, перезапустите приложение");
+        } catch (InterruptedException e) {
+            log.error("Ошибка извлечения данных из очереди", e);
+            ConsoleHelper.writeSystemMessage("Непредвиденная ошибка, перезапустите приложение");
         }
     }
 }
